@@ -95,6 +95,7 @@ public class GameBoard_1D : MonoBehaviour
     {
         HashSet<Vector3Int> newAliveCells = new HashSet<Vector3Int>();  // Nuevo conjunto para las celdas vivas
         cellsToCheck.Clear();
+        //CheckLimitTiles();
 
         foreach (Vector3Int cell in aliveCells)
         {
@@ -201,6 +202,18 @@ public class GameBoard_1D : MonoBehaviour
             {
                 Vector3Int cell = new Vector3Int(x, y, 0);
                 backTiles.SetTile(cell, deadTile);
+            }
+        }
+    }
+
+    void CheckLimitTiles()
+    {
+        for (int x = -limitX; x <= limitX; x++)
+        {
+            for (int y = -limitY; y <= limitY; y++)
+            {
+            Vector3Int cell = new Vector3Int(x, y, 0);
+            cellsToCheck.Add(cell);
             }
         }
     }
