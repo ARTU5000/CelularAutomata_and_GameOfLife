@@ -157,7 +157,7 @@ public class GameBoard_1D : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1)) // Detecta el clic izquierdo
+        if (Input.GetMouseButtonDown(1)) // Detecta el clic Derecho
         {
             Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition); // Convierte la posición del ratón a coordenadas del mundo
             Vector3Int cellPos = currentState.WorldToCell(mouseWorldPos); // Convierte las coordenadas del mundo a coordenadas del Tilemap
