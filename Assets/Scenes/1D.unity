@@ -780,8 +780,8 @@ MonoBehaviour:
   deadTile: {fileID: 11400000, guid: 30494fe3c55137c4fa6a6d886747df50, type: 2}
   pattern: {fileID: 11400000, guid: fb48ec65fd9176f4bb444da0767e024b, type: 2}
   updateInterval: 0.05
-  limitX: 10
-  limitY: 10
+  limitX: 20
+  limitY: 20
   inputFieldX: {fileID: 1248747430}
   inputFieldY: {fileID: 1607614107}
   ruleInputField: {fileID: 1048469595}
@@ -2089,7 +2089,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 30
+  orthographic size: 50
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
