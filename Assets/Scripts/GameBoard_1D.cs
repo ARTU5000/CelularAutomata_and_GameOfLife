@@ -118,14 +118,14 @@ public class GameBoard_1D : MonoBehaviour
             Vector3Int leftNeighbor = cell + new Vector3Int(-1, 0, 0);
             Vector3Int rightNeighbor = cell + new Vector3Int(1, 0, 0);
 
-            bool newAliveState = ApplyRule(IsAlive(leftNeighbor), IsAlive(cell), IsAlive(rightNeighbor));// Implementa la regla 30
+            bool newAliveState = ApplyRule(IsAlive(leftNeighbor), IsAlive(cell), IsAlive(rightNeighbor));// Implementa la regla
 
-            Vector3Int lowerCell = cell + new Vector3Int(0, -1, 0);// Cambia el estado de la celda en el nivel inferior
+            Vector3Int lowerCell = cell + new Vector3Int(0, -1, 0);
 
             if (lowerCell.y < -limitY)// Ignora cualquier celda que esté por debajo del límite inferior
                 continue;  
 
-            if (newAliveState)
+            if (newAliveState)// Cambia el estado de la celda en el nivel inferior
             {
                 nextState.SetTile(lowerCell, aliveTile);
                 newAliveCells.Add(lowerCell);
@@ -144,10 +144,10 @@ public class GameBoard_1D : MonoBehaviour
 
     private bool ApplyRule(bool leftAlive, bool currentAlive, bool rightAlive)
     {
-        // Convierte la regla en un número binario (un array de 8 bits)
+        // Convierte la regla en un "número binario" (* ° ° = 1 0 0 = 4 + 0 + 0 = 4)
         int binaryState = (leftAlive ? 4 : 0) + (currentAlive ? 2 : 0) + (rightAlive ? 1 : 0);
 
-        // Convierte la regla a binario y verifica si el bit correspondiente está activado
+        // ">>" hace que el se "mueva" el ruleNumber a la posición binaryState en el binario, se toma el numero a la deracha y se compara con 1 (00011110 >> 4) -> 00000011 , 00000011 & 1 = 1 , 1==1 = true
         return ((ruleNumber >> binaryState) & 1) == 1;
     }
 
