@@ -131,7 +131,10 @@ public class GameBoard_1D : MonoBehaviour
                 newAliveCells.Add(lowerCell);
             }
             else
+            {
                 nextState.SetTile(lowerCell, deadTile);
+                newAliveCells.Add(lowerCell);
+            }
         }
 
         aliveCells = newAliveCells; // Actualiza las celdas vivas para la siguiente iteración
@@ -171,11 +174,23 @@ public class GameBoard_1D : MonoBehaviour
                 {
                     currentState.SetTile(cellPos, deadTile); //La tile deja de estar viva
                     aliveCells.Remove(cellPos); // Remueve la celda de las celdas vivas
+                    for (int x = -limitX; x <= limitX; x++) // Llena el área dentro de los límites con deadTiles
+                    {
+                        Vector3Int cell = new Vector3Int(x, cellPos.y, 0);
+                        backTiles.SetTile(cell, deadTile);
+                        aliveCells.Remove(cellPos);
+                    }
                 }
                 else// Si no hay una tile viva, procede a colocar una nueva tile viva
                 {
                     currentState.SetTile(cellPos, aliveTile); // Coloca una tile viva donde se hizo clic
                     aliveCells.Add(cellPos); // Añade la celda a las celdas vivas
+                    for (int x = -limitX; x <= limitX; x++) // Llena el área dentro de los límites con deadTiles
+                    {
+                        Vector3Int cell = new Vector3Int(x, cellPos.y, 0);
+                        backTiles.SetTile(cell, deadTile);
+                        aliveCells.Add(cellPos);
+                    }
                 }
             }
         }
