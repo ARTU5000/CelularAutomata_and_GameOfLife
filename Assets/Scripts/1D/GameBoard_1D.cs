@@ -178,7 +178,7 @@ public class GameBoard_1D : MonoBehaviour
                     {
                         Vector3Int cell = new Vector3Int(x, cellPos.y, 0);
                         currentState.SetTile(cell, deadTile);
-                        aliveCells.Remove(cellPos);
+                        aliveCells.Remove(cell);
                     }
                 }
                 else// Si no hay una tile viva, procede a colocar una nueva tile viva
@@ -187,7 +187,7 @@ public class GameBoard_1D : MonoBehaviour
                     {
                         Vector3Int cell = new Vector3Int(x, cellPos.y, 0);
                         currentState.SetTile(cell, deadTile);
-                        aliveCells.Add(cellPos);
+                        aliveCells.Add(cell);
                     }
                     currentState.SetTile(cellPos, aliveTile); // Coloca una tile viva donde se hizo clic
                     aliveCells.Add(cellPos); // Añade la celda a las celdas vivas
