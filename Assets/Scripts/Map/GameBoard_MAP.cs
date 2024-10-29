@@ -15,6 +15,7 @@ public class GameBoard_Map : MonoBehaviour
     [SerializeField]private Tile grassTile;
     [SerializeField]private Tile rockTile;
     [SerializeField]private Tile lavaTile;
+    [SerializeField]private Tile iceTile;
     [SerializeField]private Pattern pattern;
     [SerializeField]private float updateInterval = 0.05f;
 
@@ -44,6 +45,28 @@ public class GameBoard_Map : MonoBehaviour
     private void Start()
     {
         SetPatern(pattern);
+        for (int x = -limitX; x <= limitX; x++) // Llena el área dentro de los límites con deadTiles
+        {
+            for (int y = -limitY; y <= limitY; y++)
+            {
+                int rand = Random.Range(0, 15);
+                Tile introTile = lavaTile;
+                if (rand >= 0 && rand < 5)
+                    {introTile = waterTile;}
+                else if (rand >= 5 && rand < 9)
+                    {introTile = sandTile;}
+                else if (rand >= 9 && rand < 12)
+                    {introTile = grassTile;}
+                else if (rand >= 12 && rand < 14)
+                    {introTile = rockTile;}
+                else if (rand >= 14 && rand < 15)
+                    {introTile = lavaTile;}
+
+                Vector3Int cell = new Vector3Int(x, y, 0);
+                currentState.SetTile(cell, introTile);
+                aliveCells.Add(cell);
+            }
+        }
     }
     private void SetPatern(Pattern pattern)
     {
@@ -124,23 +147,30 @@ public class GameBoard_Map : MonoBehaviour
             int neighbors = CountNeighbors(cell);
             bool alive = IsAlive(cell);
 
-            if (!alive && neighbors == 2)
-            {
-                nextState.SetTile(cell, sandTile);
-                aliveCells.Add(cell);
-            }
-            else if (alive && (neighbors == 2))
+            if (!alive && neighbors == 1)
             {
                 nextState.SetTile(cell, waterTile);
+                aliveCells.Add(cell);
+            }
+            else if (!alive && neighbors == 2)
+            {
+                nextState.SetTile(cell, sandTile);
+                
+                aliveCells.Add(cell);
+            }
+            else if (alive && (neighbors >= 2 && neighbors < 3))
+            {
+                nextState.SetTile(cell, iceTile);
                 aliveCells.Remove(cell);
             }
-            else if (alive && (neighbors > 2 && neighbors <= 4))
+            else if (alive && (neighbors >= 3 && neighbors < 5))
             {
                 nextState.SetTile(cell, grassTile);
             }
-            else if (alive && (neighbors > 4 && neighbors < 7))
+            else if (alive && (neighbors >= 5 && neighbors < 7))
             {
                 nextState.SetTile(cell, waterTile);
+                aliveCells.Remove(cell);
             }
             else if (alive && (neighbors == 7))
             {
@@ -236,9 +266,21 @@ public class GameBoard_Map : MonoBehaviour
         {
             for (int y = -limitY; y <= limitY; y++)
             {
+                int rand = Random.Range(0, 15);
+                Tile introTile = lavaTile;
+                if (rand >= 0 && rand < 5)
+                    {introTile = waterTile;}
+                else if (rand >= 5 && rand < 9)
+                    {introTile = sandTile;}
+                else if (rand >= 9 && rand < 12)
+                    {introTile = grassTile;}
+                else if (rand >= 12 && rand < 14)
+                    {introTile = rockTile;}
+                else if (rand >= 14 && rand < 15)
+                    {introTile = lavaTile;}
+
                 Vector3Int cell = new Vector3Int(x, y, 0);
-                backTiles.SetTile(cell, waterTile);
-                currentState.SetTile(cell, waterTile);
+                currentState.SetTile(cell, introTile);
                 aliveCells.Add(cell);
             }
         }

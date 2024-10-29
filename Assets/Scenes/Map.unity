@@ -762,8 +762,9 @@ MonoBehaviour:
   grassTile: {fileID: 11400000, guid: 81a0e25d12a607348bdf665668b1193c, type: 2}
   rockTile: {fileID: 11400000, guid: 0c3beccbbea182044ac706af507e357a, type: 2}
   lavaTile: {fileID: 11400000, guid: 704135e78278fcb4fa229ee358740913, type: 2}
+  iceTile: {fileID: 11400000, guid: 78d5a4f636412b14ba73aa262156b471, type: 2}
   pattern: {fileID: 11400000, guid: 07c8eb7ca6eb4924484ad3869e8b1d48, type: 2}
-  updateInterval: 0.05
+  updateInterval: 0.5
   limitX: 50
   limitY: 50
   inputFieldX: {fileID: 1248747430}
@@ -1935,7 +1936,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 286211130}
         m_TargetAssemblyTypeName: GameBoard_Map, Assembly-CSharp
-        m_MethodName: UpdateLimits
+        m_MethodName: FillWithDeadTiles
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
