@@ -28,10 +28,10 @@ public class GameBoard_Map : MonoBehaviour
     [SerializeField] private TMP_InputField ruleInputField; // El campo para cambiar la regla
     private int ruleNumber = 30;
 
-    private HashSet<Vector3Int> aliveCells;
+    [SerializeField]private HashSet<Vector3Int> aliveCells;
     private HashSet<Vector3Int> cellsToCheck;
 
-    public int population { get; private set; }
+    [SerializeField]public int population { get; private set; }
     public int iteration { get; private set;}
     public float time { get; private set;}
 
@@ -53,11 +53,11 @@ public class GameBoard_Map : MonoBehaviour
                 Tile introTile = lavaTile;
                 if (rand >= 0 && rand < 5)
                     {introTile = waterTile;}
-                else if (rand >= 5 && rand < 9)
+                else if (rand >= 5 && rand < 8)
                     {introTile = sandTile;}
-                else if (rand >= 9 && rand < 12)
+                else if (rand >= 8 && rand < 13)
                     {introTile = grassTile;}
-                else if (rand >= 12 && rand < 14)
+                else if (rand >= 13 && rand < 14)
                     {introTile = rockTile;}
                 else if (rand >= 14 && rand < 15)
                     {introTile = lavaTile;}
@@ -118,80 +118,189 @@ public class GameBoard_Map : MonoBehaviour
     }
     
    private void UpdateState()
-    {
-        // Juntando las celdas a revisar, limitadas por los bordes
-        foreach (Vector3Int cell in aliveCells)
-        {
-            for (int x = -1; x <= 1; x++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    Vector3Int neighborCell = cell + new Vector3Int(x, y, 0);
+{
+    // Asegurarse de que se verifiquen todas las celdas dentro de los límites en cada iteración
+    cellsToCheck.Clear();
+    CheckLimitTiles();
 
-                    if (Mathf.Abs(neighborCell.x) <= limitX && Mathf.Abs(neighborCell.y) <= limitY) // revisa que este dentro del limite
-                    {
-                        cellsToCheck.Add(neighborCell);
-                    }
-                }
-            }
+    // Cambiando al siguiente estado
+    foreach (Vector3Int cell in cellsToCheck)
+    {
+        if (Mathf.Abs(cell.x) > limitX || Mathf.Abs(cell.y) > limitY) // revisa que esté dentro del límite
+        {
+            continue;
         }
 
-        // Cambiando al siguiente estado, limitado por los bordes
-        foreach (Vector3Int cell in cellsToCheck)
+        TileBase currentTile = currentState.GetTile(cell);
+
+        int waterNeighbors = CountSpecificNeighbors(cell, waterTile);
+        int sandNeighbors = CountSpecificNeighbors(cell, sandTile);
+        int grassNeighbors = CountSpecificNeighbors(cell, grassTile);
+        int rockNeighbors = CountSpecificNeighbors(cell, rockTile);
+        int iceNeighbors = CountSpecificNeighbors(cell, iceTile);
+        int lavaNeighbors = CountSpecificNeighbors(cell, lavaTile);
+
+        // Condiciones de cambio de tiles
+        if (currentTile == waterTile)
         {
-            if (Mathf.Abs(cell.x) > limitX || Mathf.Abs(cell.y) > limitY) // revisa que este dentro del limite
+            if (waterNeighbors == 8)
             {
-                continue;
+                float rand = Random.value;
+                if (rand <= 0.1f)
+                {
+                    nextState.SetTile(cell, iceTile); // Cambia de agua a hielo
+                    aliveCells.Add(cell);
+                }
+                else if (rand > 0.1f && rand <= 0.2f)
+                {
+                    nextState.SetTile(cell, rockTile); // Cambia de agua a roca
+                    aliveCells.Add(cell);
+                }
+                else if (rand > 0.2f && rand <= 0.4f)
+                {
+                    nextState.SetTile(cell, grassTile); // Cambia de agua a pasto
+                    aliveCells.Add(cell);
+                }
+                else if (grassNeighbors >= 6)
+                {
+                    nextState.SetTile(cell, rockTile); // Cambia de pasto a roca
+                    aliveCells.Add(cell);
+                }
+                else
+                {
+                    nextState.SetTile(cell, currentTile); // Mantiene agua si no se cumple ninguna probabilidad
+                    aliveCells.Add(cell);
+                }
             }
-
-            int neighbors = CountNeighbors(cell);
-            bool alive = IsAlive(cell);
-
-            if (!alive && neighbors == 1)
+            else if (iceNeighbors >= 3 && Random.value <= 0.05f)
             {
-                nextState.SetTile(cell, waterTile);
+                nextState.SetTile(cell, iceTile); // Cambia de agua a hielo con probabilidad
                 aliveCells.Add(cell);
             }
-            else if (!alive && neighbors == 2)
+            else if (rockNeighbors >= 3 && Random.value <= 0.05f)
             {
-                nextState.SetTile(cell, sandTile);
-                
+                nextState.SetTile(cell, rockTile); // Cambia de agua a hielo con probabilidad
                 aliveCells.Add(cell);
             }
-            else if (alive && (neighbors >= 2 && neighbors < 3))
+            else if (waterNeighbors >= 3 && Random.value <= 0.25f)
             {
-                nextState.SetTile(cell, iceTile);
-                aliveCells.Remove(cell);
-            }
-            else if (alive && (neighbors >= 3 && neighbors < 5))
-            {
-                nextState.SetTile(cell, grassTile);
-            }
-            else if (alive && (neighbors >= 5 && neighbors < 7))
-            {
-                nextState.SetTile(cell, waterTile);
-                aliveCells.Remove(cell);
-            }
-            else if (alive && (neighbors == 7))
-            {
-                nextState.SetTile(cell, rockTile);
-            }
-            else if (alive && (neighbors == 8))
-            {
-                nextState.SetTile(cell, lavaTile);
+                nextState.SetTile(cell, sandTile); // Cambia de agua a arena
+                aliveCells.Add(cell);
             }
             else
             {
-                nextState.SetTile(cell, currentState.GetTile(cell));
+                nextState.SetTile(cell, currentTile); // Mantiene el estado actual si no se cumplen condiciones
+                aliveCells.Add(cell);
             }
         }
-
-        // Intercambiamos los Tilemaps
-        Tilemap temp = currentState;
-        currentState = nextState;
-        nextState = temp;
-        nextState.ClearAllTiles();
+        else if (currentTile == sandTile)
+        {
+            if (sandNeighbors >= 4)
+            {
+                nextState.SetTile(cell, grassTile); // Cambia de arena a pasto
+                aliveCells.Add(cell);
+            }
+            else if (sandNeighbors < 3)
+            {
+                nextState.SetTile(cell, waterTile); // Regresa a agua si tiene menos de 3 vecinos de arena
+                aliveCells.Add(cell);
+            }
+            else
+            {
+                nextState.SetTile(cell, currentTile); // Mantiene el estado actual
+                aliveCells.Add(cell);
+            }
+        }
+        else if (currentTile == grassTile)
+        {
+            if (grassNeighbors >= 7)
+            {
+                nextState.SetTile(cell, rockTile); // Cambia de pasto a roca
+                aliveCells.Add(cell);
+            }
+            else if (grassNeighbors < 2)
+            {
+                nextState.SetTile(cell, sandTile); // Regresa a arena si tiene menos de 3 vecinos de pasto
+                aliveCells.Add(cell);
+            }
+            else
+            {
+                nextState.SetTile(cell, currentTile); // Mantiene el estado actual
+                aliveCells.Add(cell);
+            }
+        }
+        else if (currentTile == rockTile)
+        {
+            float rand = Random.value;
+            if (rockNeighbors >= 8 )
+            {
+                nextState.SetTile(cell, lavaTile); // Cambia de roca a lava
+                aliveCells.Add(cell);
+            }
+            else if (rockNeighbors == 7 && lavaNeighbors == 1)
+            {
+                nextState.SetTile(cell, lavaTile); // Regresa a pasto si tiene menos de 3 vecinos de roca
+                aliveCells.Add(cell);
+            }
+            else if (rockNeighbors < 1)
+            {
+                nextState.SetTile(cell, grassTile); // Regresa a pasto si tiene menos de 3 vecinos de roca
+                aliveCells.Add(cell);
+            }
+            else
+            {
+                nextState.SetTile(cell, currentTile); // Mantiene el estado actual
+                aliveCells.Add(cell);
+            }
+        }
+        else if (currentTile == lavaTile)
+        {
+            if (rockNeighbors + lavaNeighbors < 7)
+            {
+                nextState.SetTile(cell, rockTile); // Cambia de roca a lava
+                aliveCells.Add(cell);
+            }
+            else
+            {
+                nextState.SetTile(cell, currentTile); // Mantiene el estado actual
+                aliveCells.Add(cell);
+            }
+        }
+        else
+        {
+            nextState.SetTile(cell, currentTile); // Mantiene el estado actual
+            aliveCells.Add(cell);
+        }
     }
+
+    // Intercambiamos los Tilemaps
+    Tilemap temp = currentState;
+    currentState = nextState;
+    nextState = temp;
+    nextState.ClearAllTiles();
+}
+
+private int CountSpecificNeighbors(Vector3Int cell, Tile specificTile)
+{
+    int count = 0;
+
+    for (int x = -1; x <= 1; x++)
+    {
+        for (int y = -1; y <= 1; y++)
+        {
+            if (x == 0 && y == 0) continue; // Evitar la celda central
+
+            Vector3Int neighbor = cell + new Vector3Int(x, y, 0);
+
+            if (currentState.GetTile(neighbor) == specificTile)
+            {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
 
     private int CountNeighbors(Vector3Int cell)
     {
@@ -236,7 +345,6 @@ public class GameBoard_Map : MonoBehaviour
                 if (currentTile == sandTile)// La tile ya está viva
                 {
                     currentState.SetTile(cellPos, waterTile); //La tile deja de estar viva
-                    aliveCells.Remove(cellPos); // Remueve la celda de las celdas vivas
                 }
                 else// Si no hay una tile viva, procede a colocar una nueva tile viva
                 {

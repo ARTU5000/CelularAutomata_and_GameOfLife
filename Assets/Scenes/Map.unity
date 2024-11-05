@@ -765,8 +765,8 @@ MonoBehaviour:
   iceTile: {fileID: 11400000, guid: 78d5a4f636412b14ba73aa262156b471, type: 2}
   pattern: {fileID: 11400000, guid: 07c8eb7ca6eb4924484ad3869e8b1d48, type: 2}
   updateInterval: 0.5
-  limitX: 50
-  limitY: 50
+  limitX: 150
+  limitY: 150
   inputFieldX: {fileID: 1248747430}
   inputFieldY: {fileID: 1607614107}
   ruleInputField: {fileID: 1048469595}
@@ -2049,7 +2049,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.3160377, g: 0.72756857, b: 1, a: 0}
+  m_BackGroundColor: {r: 0, g: 0.4716981, b: 0.21361214, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -2074,7 +2074,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 50
+  orthographic size: 200
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
