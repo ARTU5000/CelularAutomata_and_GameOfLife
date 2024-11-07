@@ -17,7 +17,7 @@ public class AI : MonoBehaviour
 
     private void Start()
     {
-        aiPosition = new Vector3Int(30, 1, 0);
+        aiPosition = new Vector3Int(30, -30, 0);
         goalMap.SetTile(aiPosition, aiTile);
         goalPosition = new Vector3Int(-30, 30, 0);
         goalMap.SetTile(goalPosition, metaTile);
@@ -50,7 +50,7 @@ public class AI : MonoBehaviour
             yield return new WaitForSeconds(moveInterval);  // Espera el intervalo antes de moverse otra vez
         }
 
-        Debug.Log("Goal reached! Total cost: " + totalCost); //
+        Debug.Log("llegaste al final. Costo final: " + totalCost); //informa que ya llegó
     }
 
     private Vector3Int GetNextPosition()
@@ -59,11 +59,7 @@ public class AI : MonoBehaviour
             aiPosition + Vector3Int.up,
             aiPosition + Vector3Int.down,
             aiPosition + Vector3Int.left,
-            aiPosition + Vector3Int.right,
-            aiPosition + new Vector3Int(-1, 1, 0),
-            aiPosition + new Vector3Int(1, 1, 0),
-            aiPosition + new Vector3Int(-1, -1, 0),
-            aiPosition + new Vector3Int(1, -1, 0)
+            aiPosition + Vector3Int.right
         };
 
         Vector3Int bestPosition = aiPosition; //marca la posicion actual como la mejor

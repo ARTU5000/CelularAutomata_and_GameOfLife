@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -766,7 +765,7 @@ MonoBehaviour:
   lavaTile: {fileID: 11400000, guid: 704135e78278fcb4fa229ee358740913, type: 2}
   iceTile: {fileID: 11400000, guid: 78d5a4f636412b14ba73aa262156b471, type: 2}
   pattern: {fileID: 11400000, guid: 07c8eb7ca6eb4924484ad3869e8b1d48, type: 2}
-  updateInterval: 0.5
+  updateInterval: 0.1
   limitX: 50
   limitY: 50
   inputFieldX: {fileID: 1248747430}
