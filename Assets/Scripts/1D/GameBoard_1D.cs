@@ -21,8 +21,8 @@ public class GameBoard_1D : MonoBehaviour
     [SerializeField]private TMP_InputField inputFieldX;
     [SerializeField]private TMP_InputField inputFieldY;
 
-    [SerializeField] private TMP_InputField ruleInputField; // El campo para cambiar la regla
-    private int ruleNumber = 30;
+    [SerializeField] private TMP_InputField iterateInputField; // El campo para asignar el numero de iteraciones
+    private int iterationNumber = 30;
 
     private HashSet<Vector3Int> aliveCells;
     private HashSet<Vector3Int> cellsToCheck;
@@ -150,8 +150,8 @@ public class GameBoard_1D : MonoBehaviour
         // Convierte la regla en un "número binario" (* ° ° = 1 0 0 = 4 + 0 + 0 = 4)
         int binaryState = (leftAlive ? 4 : 0) + (currentAlive ? 2 : 0) + (rightAlive ? 1 : 0);
 
-        // ">>" hace que el se "mueva" el ruleNumber a la posición binaryState en el binario, se toma el numero a la deracha y se compara con 1 (00011110 >> 4) -> 00000011 , 00000011 & 1 = 1 , 1==1 = true
-        return ((ruleNumber >> binaryState) & 1) == 1;
+        // ">>" hace que el se "mueva" el iterationNumber a la posición binaryState en el binario, se toma el numero a la deracha y se compara con 1 (00011110 >> 4) -> 00000011 , 00000011 & 1 = 1 , 1==1 = true
+        return ((iterationNumber >> binaryState) & 1) == 1;
     }
 
     public bool IsAlive(Vector3Int cell)
@@ -231,13 +231,5 @@ public class GameBoard_1D : MonoBehaviour
             cellsToCheck.Add(cell);
             }
         }
-    }
-
-    public void SetRuleFromInput()
-    {
-        if (int.TryParse(ruleInputField.text, out int newRule)) //convierte el input en un numero
-            ruleNumber = newRule; // Asigna la nueva regla
-        else
-            Debug.LogError("El valor ingresado no es un número válido");
     }
 }
