@@ -35,6 +35,8 @@ public class GameBoard_Map : MonoBehaviour
     public int iteration { get; private set;}
     public float time { get; private set;}
 
+    public GameObject AIPlay;
+
     private void Awake()
     {
         aliveCells = new HashSet<Vector3Int>();
@@ -109,6 +111,8 @@ public class GameBoard_Map : MonoBehaviour
 
             yield return interval;
         }
+        
+        AIPlay.SetActive(true); 
     }
     
    private void UpdateState()
