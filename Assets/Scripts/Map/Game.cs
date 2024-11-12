@@ -2,25 +2,45 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using TMPro;
 
-public class AI : MonoBehaviour
+public class Game : MonoBehaviour
 {
     [SerializeField] private Tilemap movementMap;  // Tilemap donde la IA se mueve
     [SerializeField] private Tilemap goalMap;      // Tilemap con la meta y la posicion de la IA
-    [SerializeField] private Tile aiTile, metaTile;
-    [SerializeField] private Tile sandTile, waterTile, grassTile, rockTile, lavaTile, iceTile;
+
+    [SerializeField] private Tile aiTile;
+    [SerializeField] private Tile playerTile;
+    [SerializeField] private Tile metaTile;
+
+    [SerializeField] private Tile sandTile;
+    [SerializeField] private Tile waterTile;
+    [SerializeField] private Tile grassTile;
+    [SerializeField] private Tile rockTile;
+    [SerializeField] private Tile lavaTile; 
+    [SerializeField] private Tile iceTile;
 
     private Vector3Int aiPosition;
+    private Vector3Int playerPosition;
     private Vector3Int goalPosition;
+
     private float moveInterval = 0.2f;  // Intervalo de movimiento en segundos
     private int totalCost = 0;  // Costo total acumulado
+    private int playerTotalCost = 0;  // Costo total acumulado del jugador
 
     private void Start()
     {
         aiPosition = new Vector3Int(30, -30, 0);
         goalMap.SetTile(aiPosition, aiTile);
-        goalPosition = new Vector3Int(-30, 30, 0);
+        goalPosition = new Vector3Int(0, 30, 0);
         goalMap.SetTile(goalPosition, metaTile);
+        playerPosition = new Vector3Int(-30, -30, 0);
+        goalMap.SetTile(playerPosition, playerTile);
+    }
+
+    public void Update()
+    {
+        MovePlayer();
     }
 
     public void StartAI()
@@ -50,7 +70,7 @@ public class AI : MonoBehaviour
             yield return new WaitForSeconds(moveInterval);  // Espera el intervalo antes de moverse otra vez
         }
 
-        Debug.Log("llegaste al final. Costo final: " + totalCost); //informa que ya lleg�
+        Debug.Log("AI llego al final. Costo final: " + totalCost); //informa que ya lleg�
     }
 
     private Vector3Int GetNextPosition()
@@ -100,5 +120,50 @@ public class AI : MonoBehaviour
         if (tile == iceTile) return 3; //pasa por el frio, se desliza
 
         return int.MaxValue;  // Costo alto para tiles desconocidos
+    }
+    private void MovePlayer()
+    {
+        Vector3Int newPlayerPosition = playerPosition;
+
+        if (Input.GetKeyDown(KeyCode.UpArrow) && playerPosition != goalPosition)
+        {
+            newPlayerPosition += Vector3Int.up;
+            PlayerCost(newPlayerPosition);
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow) && playerPosition != goalPosition)
+        {
+            newPlayerPosition += Vector3Int.down;
+            PlayerCost(newPlayerPosition);
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow) && playerPosition != goalPosition)
+        {
+            newPlayerPosition += Vector3Int.left;
+            PlayerCost(newPlayerPosition);
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow) && playerPosition != goalPosition)
+        {
+            newPlayerPosition += Vector3Int.right;
+            PlayerCost(newPlayerPosition);
+        }
+    }
+
+    private void PlayerCost(Vector3Int newPlayerPosition)
+    {
+        // Comprueba si el nuevo movimiento es válido dentro del mapa
+        if (movementMap.HasTile(newPlayerPosition))
+        {
+            // Limpia la posición anterior y actualiza a la nueva
+            goalMap.SetTile(playerPosition, null);
+            playerPosition = newPlayerPosition;
+            goalMap.SetTile(playerPosition, playerTile);   
+            // Calcula el costo del movimiento y lo añade al total del jugador
+            int stepCost = GetTileCost(playerPosition);
+            playerTotalCost += stepCost;   
+            // Imprime la posición actual del jugador y el costo total
+            Debug.Log($"El jugador se movió a: {playerPosition}. Costo del movimiento: {stepCost}. Costo total: {playerTotalCost}.");
+        }
+
+        if (playerPosition == goalPosition)
+            Debug.Log("llegaste al final. Costo final: " + playerTotalCost); //informa que ya lleg�
     }
 }

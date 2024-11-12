@@ -38,6 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -765,7 +766,7 @@ MonoBehaviour:
   lavaTile: {fileID: 11400000, guid: 704135e78278fcb4fa229ee358740913, type: 2}
   iceTile: {fileID: 11400000, guid: 78d5a4f636412b14ba73aa262156b471, type: 2}
   pattern: {fileID: 11400000, guid: 07c8eb7ca6eb4924484ad3869e8b1d48, type: 2}
-  updateInterval: 0.001
+  updateInterval: 0.5
   limitX: 50
   limitY: 50
   inputFieldX: {fileID: 1248747430}
@@ -787,6 +788,7 @@ MonoBehaviour:
   movementMap: {fileID: 1885276273}
   goalMap: {fileID: 344664336}
   aiTile: {fileID: 11400000, guid: 8ad58a7d050a800489c7977916bad325, type: 2}
+  playerTile: {fileID: 11400000, guid: a4ce9db65ea4c734b8fe212de0b98590, type: 2}
   metaTile: {fileID: 11400000, guid: 0d3535855188d0a48b0a3fc4c0eb2714, type: 2}
   sandTile: {fileID: 11400000, guid: 607778c1c9b016142b84a06c17e852f9, type: 2}
   waterTile: {fileID: 11400000, guid: a3a88b760db900949b93759b1b02dc1d, type: 2}
