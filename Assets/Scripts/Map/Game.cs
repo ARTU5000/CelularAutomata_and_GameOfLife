@@ -25,8 +25,12 @@ public class Game : MonoBehaviour
     private Vector3Int goalPosition;
 
     private float moveInterval = 0.2f;  // Intervalo de movimiento en segundos
-    private int totalCost = 0;  // Costo total acumulado
+    private int AITotalCost = 0;  // Costo total acumulado
     private int playerTotalCost = 0;  // Costo total acumulado del jugador
+
+    public TextMeshProUGUI playerPts;
+    public TextMeshProUGUI AIPts;
+    public TextMeshProUGUI endPts;
 
     private void Start()
     {
@@ -41,6 +45,25 @@ public class Game : MonoBehaviour
     public void Update()
     {
         MovePlayer();
+
+        if (aiPosition == goalPosition && playerPosition == goalPosition)
+        {
+            if (AITotalCost < playerTotalCost)
+            {
+                Debug.Log($"El camino de la IA es menos peligroso. IA = {AITotalCost}. Player = {playerTotalCost}");
+                endPts.text = $"IA Win";
+            }
+            else if (AITotalCost > playerTotalCost)
+            {
+                Debug.Log($"El camino del jugador es menos peligroso. IA = {AITotalCost}. Player = {playerTotalCost}");
+                endPts.text = $"Player Win";
+            }
+            else 
+            {
+                Debug.Log($"El camino de ambos es igual de peligroso. IA = {AITotalCost}. Player = {playerTotalCost}");
+                endPts.text = $"Same Cost";
+            }
+        }
     }
 
     public void StartAI()
@@ -61,21 +84,21 @@ public class Game : MonoBehaviour
 
                 // Obtiene el costo del siguiente movimiento y lo suma al costo total
                 int stepCost = GetTileCost(aiPosition);
-                totalCost += stepCost;
+                AITotalCost += stepCost;
 
                 // Imprime la posicion actual de la IA y el costo total
-                Debug.Log($"La IA se movio a: {aiPosition}. Costo del movimiento: {stepCost}. Costo total: {totalCost}.");
+                Debug.Log($"La IA se movio a: {aiPosition}. Costo del movimiento: {stepCost}. Costo total: {AITotalCost}.");
+                AIPts.text = $"IA path Cost:{AITotalCost}";
             }
-
             yield return new WaitForSeconds(moveInterval);  // Espera el intervalo antes de moverse otra vez
         }
-
-        Debug.Log("AI llego al final. Costo final: " + totalCost); //informa que ya lleg�
+        Debug.Log("AI llego al final. Costo final: " + AITotalCost); //informa que ya lleg�
     }
 
     private Vector3Int GetNextPosition()
     {
-        Vector3Int[] positionsToCheck = { //Agrega las posiciones de alrededor para revision
+        Vector3Int[] positionsToCheck = 
+        { //Agrega las posiciones de alrededor para revision
             aiPosition + Vector3Int.up,
             aiPosition + Vector3Int.down,
             aiPosition + Vector3Int.left,
@@ -97,7 +120,6 @@ public class Game : MonoBehaviour
                 }
             }
         }
-
         return bestPosition;
     }
 
@@ -161,6 +183,7 @@ public class Game : MonoBehaviour
             playerTotalCost += stepCost;   
             // Imprime la posición actual del jugador y el costo total
             Debug.Log($"El jugador se movió a: {playerPosition}. Costo del movimiento: {stepCost}. Costo total: {playerTotalCost}.");
+            playerPts.text = $"Player path Cost:{playerTotalCost}";
         }
 
         if (playerPosition == goalPosition)
