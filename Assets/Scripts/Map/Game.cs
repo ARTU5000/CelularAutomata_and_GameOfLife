@@ -31,15 +31,19 @@ public class Game : MonoBehaviour
     public TextMeshProUGUI playerPts;
     public TextMeshProUGUI AIPts;
     public TextMeshProUGUI endPts;
+    public GameObject endButton;
+
+    [SerializeField]private int limitX;
+    [SerializeField]private int limitY;
+    [SerializeField]private TMP_InputField inputFieldX;
+    [SerializeField]private TMP_InputField inputFieldY;
 
     private void Start()
     {
+        endButton.SetActive(false);
         aiPosition = new Vector3Int(30, -30, 0);
-        goalMap.SetTile(aiPosition, aiTile);
         goalPosition = new Vector3Int(0, 30, 0);
-        goalMap.SetTile(goalPosition, metaTile);
         playerPosition = new Vector3Int(-30, -30, 0);
-        goalMap.SetTile(playerPosition, playerTile);
     }
 
     public void Update()
@@ -63,11 +67,21 @@ public class Game : MonoBehaviour
                 Debug.Log($"El camino de ambos es igual de peligroso. IA = {AITotalCost}. Player = {playerTotalCost}");
                 endPts.text = $"Same Cost";
             }
+            endButton.SetActive(true);
         }
     }
 
     public void StartAI()
     {
+        int X = limitX - 1;
+        int Y = limitY - 1;
+        aiPosition = new Vector3Int(X, -Y, 0);
+        goalMap.SetTile(aiPosition, aiTile);
+        goalPosition = new Vector3Int(0, Y, 0);
+        goalMap.SetTile(goalPosition, metaTile);
+        playerPosition = new Vector3Int(-X, -Y, 0);
+        goalMap.SetTile(playerPosition, playerTile);
+
         StartCoroutine(MoveTowardsGoal());  // Inicia el movimiento de la IA al presionar el boton
     }
 
@@ -188,5 +202,14 @@ public class Game : MonoBehaviour
 
         if (playerPosition == goalPosition)
             Debug.Log("llegaste al final. Costo final: " + playerTotalCost); //informa que ya lleg�
+    }
+
+    public void UpdateLimits() //actualiza los límites
+    {
+        if (int.TryParse(inputFieldX.text, out int newX))
+            limitX = newX/2;
+
+        if (int.TryParse(inputFieldY.text, out int newY))
+            limitY = newY/2;
     }
 }
